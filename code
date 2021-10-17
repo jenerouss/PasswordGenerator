@@ -1,0 +1,360 @@
+from random import randint as r
+import os
+import datetime
+from tkinter import *
+from tkinter import filedialog
+from tkinter import messagebox
+import requests
+root = Tk()
+root.iconbitmap('icon.ico')
+class Files():
+    '''Работа с конфиг файлами'''
+    def __init__(self,name):
+        self.name = name + '.txt' # имя файла
+        # второе значение при открытии файла - режим в котором откроется файл
+        #'r' - открытие на чтение.
+        #'w' - открытие на запись, содержимое файла удаляется, если файла не существует, создается новый.
+        #'x' - открытие на запись, если файла не существует, иначе исключение.
+        #'a' - открытие на дозапись, информация добавляется в конец файла.
+        #'b' - открытие в двоичном режиме.
+        #'t' - открытие в текстовом режиме (является значением по умолчанию).
+        #'+' - открытие на чтение и запись
+
+    def configcreate(self):
+        '''Создание конфиг файла для работы с чекбаттонами'''
+        file = open(self.name, 'a+')
+        file.close()
+        return self.name
+
+    def directorycreate(self):
+        '''Создание конфиг файла для работы с путем директории'''
+        file = open(self.name,'a+')
+        file.close()
+        return self.name
+
+    def namecreate(self):
+        '''Создание конфиг файла для работы с именем конечного файла'''
+        file = open(self.name,'a+')
+        file.close()
+        return self.name
+
+    def checknamecreate(self):
+        file = open(self.name, 'r+')
+        cq = 0
+        for bb in file:
+            for aa in bb:
+                cq += 1
+        if cq <= 0:
+            file.write('passwords_generator')
+        file.close()
+    def checkdir(self):
+        '''Проверка содержимого файла директории для корректной работы'''
+        file = open(self.name,'r+')
+        cq = 0
+        mas = []
+        for bb in file:
+            for aa in bb:
+                cq += 1
+                mas += aa
+        if cq <= 2 or mas[1] != ':' or mas[2] != '/':
+            file = open(self.name, 'w')
+            file.write('0')
+            file.close()
+
+    def checkcfg(self):
+        '''Проверка содержимого файла конфига для корректной работы'''
+        mas = []
+        OP = StringVar(None, 1)
+        a = OP.get()
+        file = open(self.name, 'r+')
+        cq = 0
+        for bb in file:
+            for aa in bb:
+                cq += 1
+        if cq <= 8:
+            for i in range(9):
+                file.write(a + '\n')
+        file.close()
+
+    def reading(self):
+        '''Чтение из файла'''
+        file = open(self.name,'r')
+        read = file.read()
+        file.close()
+        return read
+
+    def save(self,event):
+        '''Работа с сохранением файла в указанном пользователем месте'''
+        cb6.deselect()
+        global dir1
+        dir1 = filedialog.askdirectory()
+
+    def on_exit(self):
+        '''Запись значений в конфиг файлы на выходе из программы'''
+        with open(cfgg,'w') as cfg:
+            cfg.write(datebutton.get() + '\n')
+            cfg.write(loginbutton.get() + '\n')
+            cfg.write(passwordbutton.get() + '\n')
+            cfg.write(lapdigitsbutton.get() + '\n')
+            cfg.write(laplettersbutton.get() + '\n')
+            cfg.write(zametkabutton.get() + '\n')
+            cfg.write(savedesktopbutton.get() + '\n')
+            cfg.write(charschoicebutton.get() + '\n')
+            cfg.write(screenbutton.get() + '\n')
+            cfg.close()
+        with open(dirr,'w') as dir:
+            dir.write(dir1)
+            dir.close()
+        with open(namingg,'w') as namee:
+            namee.write(namefilebox.get())
+            namee.close()
+        root.destroy()
+
+class Click():
+    '''Основные процессы генерации в программе'''
+    def __init__(self):
+        self.chars1 = ('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890')
+        self.chars2 = ('1234567890')
+        self.chars3 = ('qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM')
+
+    def generation(self):
+        '''Генерация пароля'''
+        self.password = ''
+        self.login = ''
+        self.passwordlen = int(pas.get())
+        self.loginlen = int(log.get())
+        if charschoicebutton.get() == '1':
+            self.chars = symbols.get()
+            for i in range(self.loginlen):
+                self.login = f'{self.login}{self.chars[r(0, len(self.chars)-1)]}'
+            for i in range(self.passwordlen):
+                self.password = f'{self.password}{self.chars[r(0, len(self.chars)-1)]}'
+        else:
+            if lapdigitsbutton.get() == '1' and laplettersbutton.get() == '0':
+                cb7.deselect()
+                self.chars = self.chars2
+                for i in range(self.loginlen):
+                    self.login = f'{self.login}{self.chars[r(0, len(self.chars) - 1)]}'
+                for i in range(self.passwordlen):
+                    self.password = f'{self.password}{self.chars[r(0, len(self.chars) - 1)]}'
+            elif lapdigitsbutton.get() == '0' and laplettersbutton.get() == '1':
+                cb7.deselect()
+                self.chars = self.chars3
+                for i in range(self.loginlen):
+                    self.login = f'{self.login}{self.chars[r(0, len(self.chars) - 1)]}'
+                for i in range(self.passwordlen):
+                    self.password = f'{self.password}{self.chars[r(0, len(self.chars) - 1)]}'
+            else:
+                self.chars = self.chars1
+                for i in range(self.loginlen):
+                    self.login = f'{self.login}{self.chars[r(0, len(self.chars) - 1)]}'
+                for i in range(self.passwordlen):
+                    self.password = f'{self.password}{self.chars[r(0, len(self.chars) - 1)]}'
+
+    def desktop(self):
+        '''Работа с сохранением файла на рабочем столе'''
+        with open(dirr, 'w') as dr:
+            dr.write('0')
+            dr.close()
+        if not os.path.exists(homepath + self.filename):
+            messagebox.showwarning('Внимание', "Файл с паролями утерян, либо еще не создан. Создаю новый.")
+        file = open(homepath + self.filename, 'a+')
+        if datebutton.get() == '1':
+            self.final += self.time + '\n'
+        if loginbutton.get() == '1' and passwordbutton.get() == '0':
+            self.final += 'Логин: "' + self.login + '"\n'
+            messagebox.showinfo('Успешно','Логин сгенерирован и находится в текстовом файле с названием "' + self.userfilename + '" на рабочем столе')
+        if loginbutton.get() == '0' and passwordbutton.get() == '1':
+            self.final += 'Пароль: "' + self.password + '"\n'
+            messagebox.showinfo('Успешно', 'Пароль сгенерирован и находится в текстовом файле с названием "' + self.userfilename + '" на рабочем столе')
+        if loginbutton.get() == '1' and passwordbutton.get() == '1':
+            self.final += 'Логин: "' + self.login + '"\n' + 'Пароль: "' + self.password + '"\n'
+            messagebox.showinfo('Успешно','Логин и Пароль сгенерированы и находятся в текстовом файле с названием "' + self.userfilename + '" на рабочем столе')
+        elif loginbutton.get() == '0' and passwordbutton.get() == '0':
+            messagebox.showerror('Внимание', 'Вы не выбрали ни одну опцию, что вы хотите от программы?')
+        if zametkabutton.get() == '1':
+            self.final += 'Заметка: "' + self.zametka + '"\n'
+        self.final += self.otstyp
+        file.write(self.final)
+        file.close()
+
+    def directory(self):
+        '''Работа с сохранением файла в директории, указанной пользователем'''
+        if not os.path.exists(dir1 + self.filename):
+            messagebox.showwarning('Внимание', "Файл с паролями утерян, либо еще не создан. Создаю новый.")
+        file = open(dir1 + self.filename, 'a+')
+        if datebutton.get() == '1':
+            self.final += self.time + '\n'
+        if loginbutton.get() == '1' and passwordbutton.get() == '0':
+            self.final += 'Логин: "' + self.login + '"\n'
+            messagebox.showinfo('Успешно','Логин сгенерирован и находится в текстовом файле с названием "' + self.userfilename + '" по адресу ' + dir1)
+        if loginbutton.get() == '0' and passwordbutton.get() == '1':
+            self.final += 'Пароль: "' + self.password + '"\n'
+            messagebox.showinfo('Успешно', 'Пароль сгенерирован и находится в текстовом файле с названием "' + self.userfilename + '" по адресу ' + dir1)
+        if loginbutton.get() == '1' and passwordbutton.get() == '1':
+            self.final += 'Логин: "' + self.login + '"\n' + 'Пароль: "' + self.password + '"\n'
+            messagebox.showinfo('Успешно','Логин и Пароль сгенерированы и находятся в текстовом файле с названием "' + self.userfilename + '" по адресу ' + dir1)
+        elif loginbutton.get() == '0' and passwordbutton.get() == '0':
+            messagebox.showerror('Внимание', 'Вы не выбрали ни одну опцию, что вы хотите от программы?')
+        if zametkabutton.get() == '1':
+            self.final += 'Заметка: "' + self.zametka + '"\n'
+        self.final += self.otstyp
+        file.write(self.final)
+        file.close()
+
+    def btn_click(self,event):
+        '''Действие после нажатия на кнопку Сгенерировать'''
+        Click.generation(self)
+        self.otstyp = '====================================================\n'
+        self.userfilename = namefilebox.get()
+        self.filename = '\\' + self.userfilename + '.txt'
+        self.time = str(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+        self.zametka = zam.get()
+        self.final = self.otstyp
+        if screenbutton.get() == '1':
+            answer = messagebox.askyesnocancel('Результат', 'Ваш логин: "' + self.login + '"\n' + 'Ваш пароль: "' + self.password + '"\n' + 'Сгенерировать другой логин\пароль?')
+            if answer == False:
+                if savedesktopbutton.get() == '1':
+                    Click.desktop(self)
+                elif savedesktopbutton.get() != '1' and dir1 == '0':
+                    messagebox.showerror('Внимание', 'Выберите путь хранения файла')
+                else:
+                    Click.directory(self)
+            if answer == None:
+                a = 1
+            while answer:
+                Click.generation(self)
+                answer = messagebox.askyesnocancel('Результат','Ваш логин: "' + self.login + '"\n' + 'Ваш пароль: "' + self.password + '"\n' + 'Сгенерировать другой логин\пароль?')
+                if answer == False:
+                    if savedesktopbutton.get() == '1':
+                        Click.desktop(self)
+                    elif savedesktopbutton.get() != '1' and dir1 == '0':
+                        messagebox.showerror('Внимание', 'Выберите путь хранения файла')
+                    else:
+                        Click.directory(self)
+                if answer == None:
+                    break
+        else:
+            if savedesktopbutton.get() == '1':
+                Click.desktop(self)
+            elif savedesktopbutton.get() != '1' and dir1 == '0':
+                messagebox.showerror('Внимание', 'Выберите путь хранения файла')
+            else:
+                Click.directory(self)
+
+class Check():
+    '''Проверка чекбаттонов на противоречия'''
+
+    def check(self):
+        if charschoicebutton.get() == '1':
+            cb3.deselect()
+            cb4.deselect()
+
+    def check1(self):
+        if charschoicebutton.get() == '1' and laplettersbutton.get() == '1':
+            cb7.deselect()
+        if charschoicebutton.get() == '1' and lapdigitsbutton.get() == '1':
+            cb7.deselect()
+
+    def checkcb3(self):
+        if lapdigitsbutton.get() == '0' and laplettersbutton.get() == '0':
+            cb4.select()
+        Check().check1()
+
+    def checkcb4(self):
+        if lapdigitsbutton.get() == '0' and laplettersbutton.get() == '0':
+            cb3.select()
+        Check().check1()
+
+
+cfg = Files('cfg')
+dir = Files('dir')
+naming = Files('name')
+dir.directorycreate()
+cfg.configcreate()
+naming.namecreate()
+naming.checknamecreate()
+namingg = naming.namecreate()
+naming = naming.reading()
+cfgg = cfg.configcreate()
+dirr = dir.directorycreate()
+dir.checkdir()
+cfg.checkcfg()
+dir1 = dir.reading()
+dir = dir1
+cfg = cfg.reading()
+homepath = os.environ['USERPROFILE'] + '\Desktop'
+
+root['bg'] = '#E0FFFF'
+root.title('Генератор паролей')
+root.wm_attributes('-alpha',0.9)
+root.geometry('350x450')
+root.resizable(width=False, height=False)
+canvas = Canvas(root,height=450, width=350)
+frame = Frame(root, bg='#D3D3D3')
+frame.place (relx=0, rely=0, relwidth=1, relheight=1)
+title = Label(frame,text='Укажите длину логина и пароля',fg='black',bg='#D3D3D3', font='Gadugi 14',relief='flat')
+btn = Button(frame,text='Сгенерировать',fg='black', bg ='#D3D3D3',font='Gadugi 10',relief='groove')
+safe = Button(frame,text='Изменить место хранения файла',fg='black', bg ='#D3D3D3',font='Gadugi 10',relief='groove')
+name = Label(frame, text='Имя текстового файла:', fg='black', bg ='#D3D3D3',font='Gadugi 13')
+
+mas = []
+for bb in cfg:
+    for aa in bb:
+        if aa.isdigit():
+            mas += aa
+datebutton = StringVar(None,mas[0])
+loginbutton = StringVar(None,mas[1])
+passwordbutton = StringVar(None,mas[2])
+# lap = login and password
+lapdigitsbutton = StringVar(None,mas[3])
+laplettersbutton = StringVar(None,mas[4])
+zametkabutton = StringVar(None,mas[5])
+savedesktopbutton = StringVar(None,mas[6])
+charschoicebutton = StringVar(None,mas[7])
+screenbutton = StringVar(None,mas[8])
+cb = Checkbutton(frame,text='Записать дату создания пароля', bg='#D3D3D3', var=datebutton)
+cb1 = Checkbutton(frame,text='Логин', bg='#D3D3D3', var=loginbutton)
+cb2 = Checkbutton(frame,text='Пароль', bg='#D3D3D3', var=passwordbutton)
+cb3 = Checkbutton(frame, text='Пароль и Логин состоит из цифр', bg='#D3D3D3', var=lapdigitsbutton,command=Check().checkcb3)
+cb4 = Checkbutton(frame, text='Пароль и Логин состоит из букв', bg='#D3D3D3', var=laplettersbutton,command=Check().checkcb4)
+cb5 = Checkbutton(frame,text='Добавить заметку к паролю', bg='#D3D3D3', var=zametkabutton)
+cb6 = Checkbutton(frame,text='Сохранить файл на рабочем столе', bg='#D3D3D3', var=savedesktopbutton)
+cb7 = Checkbutton(frame, text='Сгенерировать из указанных символов:', bg='#D3D3D3', var=charschoicebutton,command=Check().check)
+cb8 = Checkbutton(frame, text='Вывести на экран сгенерированный логин/пароль', bg='#D3D3D3', var=screenbutton)
+Check().check()
+
+symbols = Entry(frame, bg='#D3D3D3')
+symbols.insert(0, '1')
+zam = Entry(frame,bg='#D3D3D3')
+namefilebox = Entry(frame,bg='#D3D3D3')
+namefilebox.insert(0, naming)
+btn_click = Click()
+btn.bind('<Button-1>',btn_click.btn_click)
+save = Files('')
+safe.bind('<Button-1>',save.save)
+log = Spinbox(root,from_=1,to=1000, width=10)
+pas = Spinbox(root,from_=1,to=1000, width=10)
+canvas.place(x=0,y=0)
+title.place(x=22,y=13)
+log.place(x=50,y=50)
+pas.place(x=230,y=50)
+btn.place(x=120,y=340)
+safe.place(x=70,y=305)
+cb.place(x=30,y=100)
+cb1.place(x=50,y=70)
+cb2.place(x=230,y=70)
+cb3.place(x=30,y=120)
+cb4.place(x=30,y=140)
+cb6.place(x=30,y=160)
+cb5.place(x=30,y=200)
+cb7.place(x=30,y=245)
+cb8.place(x=30,y=180)
+name.place(x=80,y=370)
+zam.place(x=53,y=225)
+symbols.place(x=53,y=270)
+namefilebox.place(x=110,y=400)
+
+on_exit = Files('')
+root.protocol("WM_DELETE_WINDOW",on_exit.on_exit)
+root.mainloop()
